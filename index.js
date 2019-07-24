@@ -45,7 +45,6 @@ var createPreview = (imageType, response) => {
             this.resize(width)
                 .toBuffer(imageType, function (err, buffer) {
                     if (err) {
-                        // next(err);
                         reject(err);
                     } else {
                         resolve(buffer);
@@ -77,7 +76,6 @@ var createThumbnail = (imageType, response) => {
             this.resize(width, height)
                 .toBuffer(imageType, function (err, buffer) {
                     if (err) {
-                        // next(err);
                         reject(err);
                     } else {
                         resolve(buffer);
@@ -93,7 +91,6 @@ var convertFileToPng = (response) => {
         gm(response.Body)
             .toBuffer('png', function (err, buffer) {
                 if (err) {
-                    // next(err);
                     // console.error('Error ====>', err)
                     reject(err);
                 } else {
@@ -111,7 +108,6 @@ var convertGifToPngAndPdf = (response) => {
             .selectFrame(0)
             .toBuffer('png', function (err, buffer) {
                 if (err) {
-                    // next(err);
                     // console.error('Error ====>', err)
                     reject(err);
                 } else {
@@ -166,7 +162,7 @@ var insertUnProcessedFiles = (pool, fileName, srcKey, fileSize, srcBucket) => {
             console.log('Connection successful');
             // console.log(file_name, file_path, file_size, src_bucket, thumbnail_bucket, thumbnail_location, preview_bucket, preview_location);
             // Use the connection
-            connection.query("INSERT INTO " + PROCESSED_TABLE + "(file_name, file_path, file_size, src_bucket) VALUES ( '" + fileName + "', '" + srcKey + "', " + fileSize + ", '" + srcBucket + "')"
+            connection.query("INSERT INTO " + UNPROCESSED_TABLE + "(file_name, file_path, file_size, src_bucket) VALUES ( '" + fileName + "', '" + srcKey + "', " + fileSize + ", '" + srcBucket + "')"
                 , function (error, results) {
                     // And done with the connection.
                     // Handle error after the release.
@@ -195,6 +191,7 @@ var insertUnProcessedFiles = (pool, fileName, srcKey, fileSize, srcBucket) => {
                                 else {
                                     connection.release();
                                     resolve(results);
+
                                 }
                             })
                     }
@@ -251,9 +248,6 @@ var insertProcessedFiles = (pool, labels, file_name, file_path, file_size, src_b
 
 }
 
-
-
-
 exports.handler = async (event) => {
 
     // Read options from the event.
@@ -294,7 +288,6 @@ exports.handler = async (event) => {
     var typeMatch = srcKey.match(/\.([^.]*)$/);
     if (!typeMatch) {
         console.log("Could not determine the image type.");
-        // process.exit(1);    
         return;
     }
 
@@ -304,9 +297,7 @@ exports.handler = async (event) => {
         if (/^.*(jpg|JPG|jpeg|JPEG|png|PNG)$/.test(imageType)) {
             console.log('Image type matched is ' + imageType);
             response = await getS3Object(srcBucket, srcKey);
-
         } else if (/^.*(gif|GIF|pdf|PDF)$/.test(imageType)) {
-
             console.log('Conversion in process');
             console.log('Image type matched is ' + imageType);
             response = await getS3Object(srcBucket, srcKey);
@@ -316,9 +307,7 @@ exports.handler = async (event) => {
             imageType = 'png';
             dstKey = newKey;
             previewKey = newKey;
-
         } else if (/^.*(eps|EPS|eps2|EPS2|tiff|TIFF|svg|SVG|psd|PSD|ps|PS|psb|PSB|heic|HEIC|bmp|BMP|bmp2|BMP2|bmp3|BMP3)$/.test(imageType)) {
-
             console.log('Image type is ' + imageType);
             response = await getS3Object(srcBucket, srcKey);
             response.ContentType = 'image/png';
@@ -327,7 +316,6 @@ exports.handler = async (event) => {
             imageType = 'png';
             dstKey = newKey;
             previewKey = newKey;
-
         } else {
             await insertUnProcessedFiles(pool, fileName, srcKey, fileSize, srcBucket);
             console.log('Format not supported');
@@ -390,7 +378,6 @@ exports.handler = async (event) => {
         let pool = getRDSConnectionPool();
 
         await insertProcessedFiles(pool, labels['Labels'], fileName, srcKey, fileSize, srcBucket, dstBucket, dstKey, previewBucket, previewKey);
-        // file_name, file_path, file_size, src_bucket, thumbnail_bucket, thumbnail_location, preview_bucket, preview_location
 
 
         const response = {
