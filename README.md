@@ -5,7 +5,7 @@
 ### → TLDR
 This Lambda perform following functions
 - Check image format and convert any format other than png and jpg/jpeg to png.
-- Create thumbnail and preview from image using GraphicsMagick.
+- Create thumbnail and preview from image using GraphicsMagick and store it to appropriate S3 buckets.
 - Detect labels from image using AWS Rekognition.
 - Store labels to mysql database.
 
