@@ -21,7 +21,7 @@ Supported Formats are:
 - Please run the migrations for mysql database. You'll find migrations in repository root folder.
 
 ### Environment Variables
-- Setup environment variables in Lambda. You'll find their names in the ```enviornment``` root file.
+- Setup environment variables in Lambda. You'll find their names in the ```Enviornment``` root file.
 
 ### License
 IDC. You can use it the way you want. 
