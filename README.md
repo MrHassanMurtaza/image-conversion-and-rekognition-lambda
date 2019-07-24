@@ -1,4 +1,4 @@
-> AWS Lambda to convert image file and use aws rekognition to detect labels and store into mysql datbase
+> AWS Lambda to convert image file, store thumbnaiil and previews, and use aws rekognition to detect labels and store into mysql datbase
 
 # image-conversion-and-rekognition-lambda
 
