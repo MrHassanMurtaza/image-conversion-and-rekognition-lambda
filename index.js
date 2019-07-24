@@ -1,4 +1,3 @@
-const gs = require('gs');
 const AWS = require('aws-sdk');
 const gm = require('gm')
     .subClass({ imageMagick: true });
