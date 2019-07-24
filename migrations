@@ -1,0 +1,27 @@
+CREATE DATABASE Images;
+
+CREATE TABLE IF NOT EXISTS labels(
+    label_name VARCHAR(255) NOT NULL,
+    confidence DECIMAL(18,12) NOT NULL,
+    file_id INT UNSIGNED NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS processed_files(
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    file_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    file_size INT NOT NULL,     
+    src_bucket VARCHAR(255) NOT NULL,
+    thumbnail_bucket VARCHAR(255) NOT NULL,
+    thumbnail_location VARCHAR(255) NOT NULL,
+    preview_bucket VARCHAR(255) NOT NULL,
+    preview_location VARCHAR(255) NOT NULL
+);
+
+
+CREATE TABLE IF NOT EXISTS unprocessed_files(
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    file_name VARCHAR(255) NOT NULL,
+    file_path VARCHAR(255) NOT NULL,
+    file_size INT NOT NULL
+);
